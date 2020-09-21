@@ -1,0 +1,79 @@
+{
+  "productos": [
+    {
+      "nombre": "cuerpoooooooooooo",
+      "precio": "200000",
+      "id": 6
+    },
+    {
+      "nombre": "otro producto",
+      "precio": "7000",
+      "id": 7
+    },
+    {
+      "nombre": "vodka",
+      "precio": 200,
+      "id": 8
+    },
+    {
+      "nombre": "vodka",
+      "precio": 3200,
+      "id": 9
+    },
+    {
+      "nombre": "vodka",
+      "precio": 3200,
+      "id": 10
+    },
+    {
+      "nombre": "vodka",
+      "precio": 3200,
+      "id": 11
+    },
+    {
+      "nombre": "vodka",
+      "precio": 3200,
+      "id": 12
+    },
+    {
+      "nombre": "vodka",
+      "precio": 3200,
+      "id": 13
+    },
+    {
+      "nombre": "vodka",
+      "precio": 3200,
+      "id": 14
+    },
+    {
+      "nombre": "vodka",
+      "precio": 3200,
+      "id": 15
+    },
+    {
+      "nombre": "vodka",
+      "precio": 3200,
+      "id": 16
+    },
+    {
+      "nombre": "vodka",
+      "precio": 3200,
+      "id": 17
+    },
+    {
+      "nombre": "vodka",
+      "precio": 3200,
+      "id": 18
+    },
+    {
+      "nombre": "1",
+      "precio": 2,
+      "id": 19
+    },
+    {
+      "nombre": "adasd",
+      "precio": 3000,
+      "id": 20
+    }
+  ]
+}
