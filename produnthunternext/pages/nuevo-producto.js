@@ -1,38 +1,101 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { css } from '@emotion/core';
-import Router from 'next/router';
+import Router, {useRouter} from 'next/router';
 import Layout from '../components/layout/layout';
 import { Formulario, Campo,InputSubmit ,Error} from '../components/layout/ui/Formulario';
 
+import FileUploader from 'react-firebase-file-uploader';
 
-import firebase from '../firebase';
+import { FirebaseContext } from '../firebase';
 
 // validaciones
 import useValidacion from '../hooks/useValidacion';
-import validarCrearCuenta from '../validacion/validarCrearCuenta';
+import validarCrearProducto from '../validacion/validarCrearProducto';
 const STATE_INICIAL = {
 	nombre: '',
 	empresa: '',
-  imagen: '',
-  url: '',
-  descripcion: ''
+    imagen: '',
+	url: '',
+	urlimage: '',
+    descripcion: ''
 }
 const NuevoProducto = () => {  
+	
+
+	// State de las imagenes
+	const [nombreimagen, guardarNombre] = useState('');
+	const [subiendo, guardarSubiendo] = useState(false);
+	const [progreso, guardarProgreso] = useState(0);
+	const [urlimagen, guardarUrlImagen] = useState('');
+
+
 	 
 	const [error, guardarError] = useState(false);
-	 const {  valores, errores, handleChange, handleSubmit, handleBlur} = useValidacion(STATE_INICIAL, validarCrearCuenta, crearCuenta);
-	 const {nombre, empresa, imagen, url, descripcion  } = valores;
+	const {valores, errores, handleChange, handleSubmit, handleBlur} = useValidacion(STATE_INICIAL, validarCrearProducto, crearProducto);
+	const {nombre, empresa, imagen, url, descripcion  } = valores;
+	
+	// hook de routing para redireccionar
+	const router = useRouter();
 
-	 async function crearCuenta(){
-		console.log('creado');
-		try {
-			await firebase.registrar(nombre, email, password);
-			Router.push('/');
-		} catch (error) {
-			console.log('hubo un error al crear el usuario', error.message);
-			guardarError(error.message);
+	 // context con las operaciones crud de firebase
+	 const { usuario, firebase } = useContext(FirebaseContext);
+
+	 async function crearProducto(){
+		if(!usuario){
+			return router.push('/login');
 		}
+
+		// crear objecto nuevo producto
+		const producto ={
+			nombre,
+			empresa,
+			url,
+			descripcion,
+			urlimagen,
+			votos: 0,
+			comentarios: [],
+			creado: Date.now()
+		}
+
+		// insertarlo en una base de datos
+		firebase.db.collection('productos').add(producto);
+		
+		// Cuando se inserta correctamente envia al home
+		return router.push('/');
 	 }
+	 // inicia progreso en 0 y cambia el estado a true
+	 const handleUploadStart = () => {
+		guardarProgreso(0);
+		guardarSubiendo(true);
+	}
+
+	 // Guardando el progreso
+	 const handleProgress = progreso => guardarProgreso({ progreso });
+
+	 // en caso de error en la carga de la imagen
+	 const handleUploadError = error => {
+		guardarSubiendo(error);
+		console.error(error);
+	};
+
+	const handleUploadSuccess = nombre => {
+		guardarProgreso(100);
+		guardarSubiendo(false);
+		guardarNombre(nombre)
+		firebase
+			.storage
+			.ref("productos")
+			.child(nombre)
+			.getDownloadURL()
+			.then(url => {
+			  console.log(url);
+			  guardarUrlImagen(url);
+			} );
+	};
+
+
+
+
 	return( 
         <div>
       <Layout>
@@ -79,16 +142,19 @@ const NuevoProducto = () => {
 
           <Campo>
 					<label htmlFor="imagen">Imagen</label>
-					<input
-						type="file"
+					<FileUploader
+						accept="iamge/*"
 						id="imagen"
 						name="imagen"
-						value={imagen}
-						onChange={handleChange}
-						onBlur={handleBlur}
+						randomizeFilename
+						storageRef={firebase.storage.ref("productos")}
+						onUploadStart={handleUploadStart}
+                        onUploadError={handleUploadError}
+                        onUploadSuccess={handleUploadSuccess}
+                        onProgress={handleProgress}
 					/>
 				</Campo>
-					{errores.imagen && <Error>{errores.imagen}</Error> }
+					
 
           <Campo>
 					<label htmlFor="url">Url</label>
@@ -97,6 +163,7 @@ const NuevoProducto = () => {
 						id="url"
 						name="url"
 						value={url}
+						placeholder="URL de tu producto"
 						onChange={handleChange}
 						onBlur={handleBlur}
 					/>
