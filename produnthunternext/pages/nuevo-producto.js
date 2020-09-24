@@ -11,6 +11,7 @@ import { FirebaseContext } from '../firebase';
 // validaciones
 import useValidacion from '../hooks/useValidacion';
 import validarCrearProducto from '../validacion/validarCrearProducto';
+import Error404 from '../components/layout/404';
 const STATE_INICIAL = {
 	nombre: '',
 	empresa: '',
@@ -98,11 +99,12 @@ const NuevoProducto = () => {
 	};
 
 
-
+		
 
 	return( 
         <div>
       <Layout>
+		  {!usuario ? <Error404 /> : (
         <>
 	 		<h1
 				 css={css`
@@ -199,6 +201,7 @@ const NuevoProducto = () => {
 				/>
 			 </Formulario>
         </>
+		 )}
        </Layout>
 
     </div>

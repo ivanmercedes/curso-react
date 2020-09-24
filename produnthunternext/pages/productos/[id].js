@@ -32,7 +32,7 @@ const Producto = () => {
     const { query: {id}} = router;
 
     // context de Firebase
-    const { firebase } = useContext(FirebaseContext);
+    const { firebase, usuario } = useContext(FirebaseContext);
 
     useEffect(()=>{
         if(id) {
@@ -74,19 +74,23 @@ const Producto = () => {
                       <img src={urlimagen} alt="" srcset=""/>
                       <p>{descripcion}</p>
 
-                      <h2 >Agrega tu comentario</h2>
-                       <form action="">
-                            <Campo>
-                                <input 
-                                 type="text"
-                                 name="mensaje"
-                                />
-                            </Campo>
-                                <InputSubmit 
-                                    type="submit"
-                                    value="Agregar Comentario"
-                                />
-                       </form>
+                     {usuario && (
+                         <>
+                        <h2 >Agrega tu comentario</h2>
+                          <form action="">
+                               <Campo>
+                                   <input 
+                                    type="text"
+                                    name="mensaje"
+                                   />
+                               </Campo>
+                                   <InputSubmit 
+                                       type="submit"
+                                       value="Agregar Comentario"
+                                   />
+                          </form>
+                         </>
+                     )}
 
                        <h2 css={css`
                         margin: 2rem 0;
@@ -115,9 +119,11 @@ const Producto = () => {
                           text-align:center;
                         `}>{votos} Votos</p>
 
-                        <Boton>
+                       {usuario && (
+                            <Boton>
                             Votar
                         </Boton>
+                       )}
                         </div>
                     </aside>
                 </ContenedorProducto>
