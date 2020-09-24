@@ -9,6 +9,7 @@ import Error404 from '../../components/layout/404';
 import { css } from '@emotion/core';
 import styled from '@emotion/styled';
 import { Campo, InputSubmit } from '../../components/layout/ui/Formulario';
+import Boton from '../../components/layout/ui/Boton';
 
 const ContenedorProducto = styled.div`
     @media (min-width:768px){
@@ -51,7 +52,7 @@ const Producto = () => {
 
     if(Object.keys(producto).length === 0) return 'Cargando...';
 
-    const { comentarios, creado, descripcion, empresa, nombre, url, urlimagen, votos} = producto;
+    const { comentarios, creado, descripcion, empresa, nombre, url, urlimagen, votos, creador} = producto;
     return ( 
        <Layout>
            <>
@@ -68,6 +69,7 @@ const Producto = () => {
                 <ContenedorProducto>
                     <div>
                     <p>Publicado hace: { formatDistanceTonow(new Date(creado), { locale:es})}</p>  
+                    <p>Por: {creador.nombre} de {empresa}</p>
 
                       <img src={urlimagen} alt="" srcset=""/>
                       <p>{descripcion}</p>
@@ -98,7 +100,25 @@ const Producto = () => {
                        })}
                     </div>
                     <aside>
+                        <Boton
+                            target="_blank"
+                            bgColor="true"
+                            href={url}
+                        >
+                            Visitar URL
+                        </Boton>
+                       
+                        <div css={css`
+                            margin-top: 5rem;
+                        `}>
+                        <p css={css`
+                          text-align:center;
+                        `}>{votos} Votos</p>
 
+                        <Boton>
+                            Votar
+                        </Boton>
+                        </div>
                     </aside>
                 </ContenedorProducto>
            </div>
