@@ -48,11 +48,39 @@ const Producto = () => {
            }
            obtenerProducto();
         }
-    },[id]);
+    },[id, producto]);
 
     if(Object.keys(producto).length === 0) return 'Cargando...';
 
-    const { comentarios, creado, descripcion, empresa, nombre, url, urlimagen, votos, creador} = producto;
+    const { haVotado, comentarios, creado, descripcion, empresa, nombre, url, urlimagen, votos, creador} = producto;
+
+    // Administar y validar los votos
+    const votarProducto = () =>{
+        if(!usuario){
+            return router.push('/login');
+        }
+        // obtener y sumar un nuevo voto
+        const nuevoTotal = votos + 1;
+
+       
+        // Verificar si el usuario actual ha votado
+        if(haVotado.includes(usuario.uid)) return;
+
+         // guardar el id del usuario que ha votado
+         const hanVotado = [...haVotado, usuario.uid];
+
+        // Actualizar ne la BD
+        firebase.db.collection('productos').doc(id).update({votos: nuevoTotal, haVotado:hanVotado });
+
+
+        // Actulizar el sttate
+        guardarProducto({
+            ...producto,
+            votos: nuevoTotal
+        });
+
+        
+    }
     return ( 
        <Layout>
            <>
@@ -71,7 +99,7 @@ const Producto = () => {
                     <p>Publicado hace: { formatDistanceTonow(new Date(creado), { locale:es})}</p>  
                     <p>Por: {creador.nombre} de {empresa}</p>
 
-                      <img src={urlimagen} alt="" srcset=""/>
+                      <img src={urlimagen} alt="" srcSet={urlimagen}/>
                       <p>{descripcion}</p>
 
                      {usuario && (
@@ -120,7 +148,9 @@ const Producto = () => {
                         `}>{votos} Votos</p>
 
                        {usuario && (
-                            <Boton>
+                            <Boton
+                            onClick={votarProducto}
+                            >
                             Votar
                         </Boton>
                        )}

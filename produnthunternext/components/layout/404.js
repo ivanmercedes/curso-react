@@ -6,7 +6,7 @@ const Error404 = () => {
         margin-top: 5rem;
         text-align: center;
     `}
-    >Pagina no se puede mostrar</h1> );
+    >Esta pagina no se puede mostrar</h1> );
 }
  
 export default Error404;

@@ -59,7 +59,8 @@ const NuevoProducto = () => {
 			creador:{
 				id: usuario.uid,
 				nombre: usuario.displayName
-			}
+			},
+			haVotado: []
 		}
 
 		// insertarlo en una base de datos
@@ -99,8 +100,6 @@ const NuevoProducto = () => {
 	};
 
 
-		
-
 	return( 
         <div>
       <Layout>
@@ -124,7 +123,7 @@ const NuevoProducto = () => {
 						type="text"
 						id="nombre"
 						name="nombre"
-						placeholder="Tu nombre"
+						placeholder="Nombre del Producto"
 						value={nombre}
 						onChange={handleChange}
 						onBlur={handleBlur}
