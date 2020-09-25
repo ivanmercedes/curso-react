@@ -26,6 +26,7 @@ const Producto = () => {
     // state del componente 
     const [producto, guardarProducto] = useState({});
     const [error, guardarError] = useState(false);
+    const [comentario, guardarComentario] = useState({});
 
     // Routing para obtener el id actual
     const router = useRouter();
@@ -81,6 +82,40 @@ const Producto = () => {
 
         
     }
+
+    // Funciones para crear comentarios
+    const comentarioChange = e =>{
+        guardarComentario({
+            ...comentario,
+            [e.target.name] : e.target.value
+        })
+    }
+
+    const agregarComentario = e =>{
+        e.preventDefault();
+
+        if(!usuario){
+            return router.push('/');
+        }
+
+        //Informacion extra al comentario
+        comentario.usuarioId = usuario.uid;
+        comentario.usuarioNombre = usuario.displayName;
+
+        // Tomar copia de comentario y agregarlo al arreglo
+        const nuevosComentarios = [...comentarios, comentario];
+
+        // Actualizar la BD
+        firebase.db.collection('productos').doc(id).update({
+            comentarios: nuevosComentarios
+        })
+
+        // Actualizar el state
+        guardarProducto({
+            ...producto,
+            comentarios: nuevosComentarios
+        })
+    }
     return ( 
        <Layout>
            <>
@@ -105,11 +140,14 @@ const Producto = () => {
                      {usuario && (
                          <>
                         <h2 >Agrega tu comentario</h2>
-                          <form action="">
+                          <form 
+                            onSubmit={agregarComentario}
+                          >
                                <Campo>
                                    <input 
                                     type="text"
                                     name="mensaje"
+                                    onChange={comentarioChange}
                                    />
                                </Campo>
                                    <InputSubmit 
@@ -123,13 +161,28 @@ const Producto = () => {
                        <h2 css={css`
                         margin: 2rem 0;
                       `}>Comentarios</h2>
-
-                       {comentarios.map(comentario =>{
-                           <li>
-                               <p>{comentario.nombre}</p>
-                       <p>Escrito por: {comentario.usuarioNombre}</p>
-                           </li>
-                       })}
+                      {comentarios.length === 0 ? "Aun no hay comentarios": (
+                        <ul>
+                            {comentarios.map((comentario,i) =>(
+                                <li
+                                 key={`${comentario.usuarioId}-${i}`}
+                                 css={css`
+                                    border: 1px solid #e1e1e1;
+                                    padding: 2rem;
+                                    margin-top: 1rem;
+                                 `}
+                                >
+                                    <p>{comentario.mensaje}</p>
+                                        <p>Escrito por: <span
+                                            css={css`
+                                                font-weight:bold;
+                                            `}
+                                        >{''} {comentario.usuarioNombre}</span></p>
+                                </li>
+                            ))}
+                       </ul>
+                      )}
+                        
                     </div>
                     <aside>
                         <Boton
