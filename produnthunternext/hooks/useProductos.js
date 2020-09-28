@@ -1,11 +1,11 @@
-import { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { FirebaseContext } from '../firebase';
 
 
 const useProductos = orden =>{
   
   
- const [productos, guardarProducto] = useState([]);
+    const [productos, guardarProducto] = useState([]);
 
   const { firebase } = useContext(FirebaseContext);
 
@@ -15,6 +15,7 @@ const useProductos = orden =>{
    }
    obtenerProductos();
 
+   
   }, []);
 
   function menejarSnapshot(snapshot){
